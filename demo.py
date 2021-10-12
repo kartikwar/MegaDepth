@@ -125,18 +125,25 @@ if __name__ == '__main__':
 
 	for f_path in file_lst:
 		im_path = os.path.join(images_folder, f_path)
-		depth_path = os.path.join(depth_folder, f_path)
-		heatmap_path = os.path.join(heatmap_folder, f_path)
-		bokeh_path = os.path.join(bokeh_folder, f_path)
-
-		depth = test_simple(model, im_path)
-		io.imsave(depth_path, depth)
-		heatmap = convert_depth_map_to_color(depth_path)
-		bokeh = depth_to_bokeh(im_path, depth_path)
-		cv2.resize(heatmap, bokeh.shape[:2])
 		
-		cv2.imwrite(heatmap_path, heatmap)
-		cv2.imwrite(bokeh_path, bokeh)
+		try:
+			#to do :- remove later
+			cv2.imwrite(im_path, cv2.resize(cv2.imread(im_path), (1000,1000)))
+			
+			depth_path = os.path.join(depth_folder, f_path)
+			heatmap_path = os.path.join(heatmap_folder, f_path)
+			bokeh_path = os.path.join(bokeh_folder, f_path)
+
+			depth = test_simple(model, im_path)
+			io.imsave(depth_path, depth)
+			heatmap = convert_depth_map_to_color(depth_path)
+			bokeh = depth_to_bokeh(im_path, depth_path)
+			heatmap = cv2.resize(heatmap, bokeh.shape[:2])
+			
+			cv2.imwrite(heatmap_path, heatmap)
+			cv2.imwrite(bokeh_path, bokeh)
+		except Exception as ex:
+			continue
 
 	end_time = time.time()
 	time_taken = end_time - start_time
