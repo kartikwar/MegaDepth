@@ -18,6 +18,13 @@ This is a code of the algorithm described in "MegaDepth: Learning Single-View De
 #### Dependencies:
 * The code was written in Pytorch 0.2 and Python 2.7, but it should be easy to adapt it to Python 3 and latest Pytorch version if needed.
 * You might need skimage, h5py libraries installed for python before running the code.
+* conda create --name mega_depth python=2.7
+* conda activate mega_depth
+* pip install -r requirements.txt (for torch installation, go to its homepage in case of issue)
+
+
+
+
 
 #### Single-view depth prediction on any Internet photo:
 * Download pretrained models from: http://www.cs.cornell.edu/projects/megadepth/dataset/models/best_generalization_net_G.pth and put it in "checkpoints/test_local/best_generalization_net_G.pth
