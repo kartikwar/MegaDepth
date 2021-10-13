@@ -27,6 +27,8 @@ def composite_background(foreground, background, mask):
 	return result
 
 def apply_blur(background, blur_value):
+	#done because sending 0 value in opencv does auto blur, which is not intended
+	blur_value = max(blur_value, 0.0001)
 	background = cv2.GaussianBlur(background,(GAUSSIAN_KERNEL_SIZE,GAUSSIAN_KERNEL_SIZE),sigmaX=blur_value, sigmaY=blur_value)
 	background = cv2.GaussianBlur(background,(GAUSSIAN_KERNEL_SIZE,GAUSSIAN_KERNEL_SIZE),sigmaX=blur_value, sigmaY=blur_value)
 	# background = cv2.GaussianBlur(background,(GAUSSIAN_KERNEL_SIZE,GAUSSIAN_KERNEL_SIZE),sigmaX=blur_value, sigmaY=blur_value)
@@ -111,6 +113,8 @@ if __name__ == '__main__':
 	depth_folder = os.path.join(folder_path, 'depth')
 	heatmap_folder = os.path.join(folder_path, 'heatmap')
 	bokeh_folder = os.path.join(folder_path, 'bokeh')
+	bg_rem_folder = os.path.join(folder_path, 'bg_remove')
+	result_folder = os.path.join(folder_path, 'results')
 
 	if not os.path.exists(depth_folder):
 		os.makedirs(depth_folder)
@@ -121,27 +125,43 @@ if __name__ == '__main__':
 	if not os.path.exists(bokeh_folder):
 		os.makedirs(bokeh_folder)
 
+	if not os.path.exists(result_folder):
+		os.makedirs(result_folder)
+
 	file_lst = get_file_list(images_folder)
 
 	for f_path in file_lst:
 		im_path = os.path.join(images_folder, f_path)
-		
+
+		bg_path = os.path.join(bg_rem_folder, f_path.replace('.jpg', ".png"))
+
 		try:
 			#to do :- remove later
 			cv2.imwrite(im_path, cv2.resize(cv2.imread(im_path), (1000,1000)))
-			
+
+			cv2.imwrite(bg_path, cv2.resize(cv2.imread(bg_path, cv2.IMREAD_UNCHANGED), (1000,1000)))
+
 			depth_path = os.path.join(depth_folder, f_path)
 			heatmap_path = os.path.join(heatmap_folder, f_path)
 			bokeh_path = os.path.join(bokeh_folder, f_path)
+			
+			result_path = os.path.join(result_folder, f_path)
 
 			depth = test_simple(model, im_path)
 			io.imsave(depth_path, depth)
 			heatmap = convert_depth_map_to_color(depth_path)
 			bokeh = depth_to_bokeh(im_path, depth_path)
 			heatmap = cv2.resize(heatmap, bokeh.shape[:2])
+
+			#composite bokeh with bg remove output
+			bg_rem_out = cv2.imread(bg_path, cv2.IMREAD_UNCHANGED)
+			mask = bg_rem_out[:,:,3]/255.0
+			foreground = bg_rem_out[:,:,:3]
+			bokeh_with_bg = composite_background(foreground, bokeh, mask)
 			
 			cv2.imwrite(heatmap_path, heatmap)
 			cv2.imwrite(bokeh_path, bokeh)
+			cv2.imwrite(result_path, bokeh_with_bg)
 		except Exception as ex:
 			continue
 
