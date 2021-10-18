@@ -1,4 +1,4 @@
 .vscode/
 test_dataset/
 *.pyc
-val-dataset/
+val_dataset/

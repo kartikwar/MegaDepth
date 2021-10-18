@@ -14,7 +14,7 @@ import time
 
 IMG_SIZE = 1000
 GAUSSIAN_KERNEL_SIZE = 15
-BLUR = 4.0
+BLUR = 3.0
 PRESERVE_THRESH = 0.8
 
 def composite_background(foreground, background, mask):
