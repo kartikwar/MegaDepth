@@ -1,2 +1,4 @@
 test_dataset/
 val_dataset/
+megadepthenv/
+.vscode/
