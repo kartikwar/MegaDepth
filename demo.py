@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
 	start_time = time.time()
 
-	folder_path = '/home/ubuntu/kartik/MegaDepth/test_dataset'
+	folder_path = '/home/ubuntu/kartik/MegaDepth/val_dataset'
 
 	images_folder = os.path.join(folder_path, 'images')
 	depth_folder = os.path.join(folder_path, 'depth')
